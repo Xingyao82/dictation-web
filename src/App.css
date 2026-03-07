@@ -1,0 +1,96 @@
+#root {
+  width: 100%;
+  min-height: 100vh;
+}
+
+/* 语音播放动画 */
+@keyframes pulse-ring {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.7;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.speaking-indicator {
+  animation: pulse-ring 1s ease-in-out infinite;
+}
+
+/* 输入框焦点样式 */
+input:focus,
+textarea:focus {
+  outline: none;
+  ring: 2px;
+  ring-color: rgb(79 70 229);
+}
+
+/* 按钮过渡效果 */
+button {
+  transition: all 0.2s ease;
+}
+
+button:active {
+  transform: scale(0.98);
+}
+
+/* 进度条动画 */
+progress {
+  transition: width 0.3s ease;
+}
+
+/* 卡片悬停效果 */
+.card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+}
+
+/* 徽章动画 */
+@keyframes badge-pop {
+  0% {
+    transform: scale(0.8);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.badge-animate {
+  animation: badge-pop 0.3s ease;
+}
+
+/* 响应式调整 */
+@media (max-width: 640px) {
+  .container {
+    padding: 1rem;
+  }
+}
+
+/* 自定义滚动条 */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c7c7c7;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a0a0a0;
+}
