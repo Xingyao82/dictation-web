@@ -102,19 +102,33 @@ function App() {
 
   const speakWord = useCallback(
     (word: string) => {
-      if (!synthRef.current || !word) return
+      if (!synthRef.current || !word || !('speechSynthesis' in window)) return
 
-      synthRef.current.cancel()
+      const synth = synthRef.current
+      const targetLang = /^[\u4e00-\u9fa5]/.test(word) ? 'zh' : 'en'
+
+      synth.cancel()
+      // Android Chrome 偶发暂停，先恢复再播报
+      synth.resume()
 
       const utterance = new SpeechSynthesisUtterance(word)
-      utterance.lang = /^[\u4e00-\u9fa5]/.test(word) ? 'zh-CN' : 'en-US'
+      utterance.lang = targetLang === 'zh' ? 'zh-CN' : 'en-US'
       utterance.rate = speechRate
       utterance.pitch = 1
 
+      const voices = synth.getVoices()
+      const matchedVoice =
+        voices.find((v) => v.lang?.toLowerCase().startsWith(utterance.lang.toLowerCase())) ||
+        voices.find((v) => v.lang?.toLowerCase().startsWith(targetLang))
+
+      if (matchedVoice) utterance.voice = matchedVoice
+
       utterance.onstart = () => setIsSpeaking(true)
       utterance.onend = () => setIsSpeaking(false)
+      utterance.onerror = () => setIsSpeaking(false)
 
-      synthRef.current.speak(utterance)
+      // 给移动端一点缓冲，避免 cancel 后立即 speak 被吞
+      setTimeout(() => synth.speak(utterance), 60)
     },
     [speechRate]
   )
