@@ -51,6 +51,7 @@ function App() {
   const [appState, setAppState] = useState<AppState>('input')
   const [currentIndex, setCurrentIndex] = useState(0)
   const [userInput, setUserInput] = useState('')
+  const [revealedByDontKnow, setRevealedByDontKnow] = useState(false)
 
   const [wordProgress, setWordProgress] = useState<Record<string, WordProgress>>({})
   const [roundWrongWords, setRoundWrongWords] = useState<string[]>([])
@@ -152,6 +153,7 @@ function App() {
     setReviewRound(0)
     setAppState('listening')
     setUserInput('')
+    setRevealedByDontKnow(false)
 
     setTimeout(() => {
       speakWord(finalWords[0])
@@ -176,6 +178,7 @@ function App() {
     }))
 
     if (isCorrect) {
+      setRevealedByDontKnow(false)
       moveToNext()
       return
     }
@@ -183,6 +186,7 @@ function App() {
     if (!roundWrongWords.includes(currentWord)) {
       setRoundWrongWords((prev) => [...prev, currentWord])
     }
+    setRevealedByDontKnow(false)
     setAppState('checking')
   }
 
@@ -203,6 +207,7 @@ function App() {
     }
 
     setUserInput(currentWord)
+    setRevealedByDontKnow(true)
     setAppState('checking')
   }
 
@@ -217,6 +222,7 @@ function App() {
         setCurrentIndex(0)
         setRoundWrongWords([])
         setUserInput('')
+        setRevealedByDontKnow(false)
         setAppState('listening')
 
         setTimeout(() => {
@@ -230,6 +236,7 @@ function App() {
 
     setCurrentIndex(nextIndex)
     setUserInput('')
+    setRevealedByDontKnow(false)
     setAppState('listening')
 
     setTimeout(() => {
@@ -246,6 +253,7 @@ function App() {
     setRoundWrongWords([])
     setReviewRound(0)
     setUserInput('')
+    setRevealedByDontKnow(false)
   }
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -279,6 +287,7 @@ function App() {
   const currentCorrect = currentWord
     ? normalizeWord(userInput) === normalizeWord(currentWord)
     : false
+  const showCorrectLabel = currentCorrect && !revealedByDontKnow
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4 md:p-8">
@@ -416,7 +425,7 @@ function App() {
                   placeholder="在此输入单词..."
                   className={`text-lg text-center py-6 ${
                     appState === 'checking'
-                      ? currentCorrect
+                      ? showCorrectLabel
                         ? 'border-green-500 bg-green-50'
                         : 'border-red-500 bg-red-50'
                       : ''
@@ -431,8 +440,8 @@ function App() {
                   autoFocus
                 />
                 {appState === 'checking' && (
-                  <div className={`text-center text-sm ${currentCorrect ? 'text-green-600' : 'text-red-600'}`}>
-                    {currentCorrect ? '✓ 回答正确！' : `✗ 正确答案是：${currentWord}`}
+                  <div className={`text-center text-sm ${showCorrectLabel ? 'text-green-600' : 'text-red-600'}`}>
+                    {showCorrectLabel ? '✓ 回答正确！' : `✗ 正确答案是：${currentWord}`}
                   </div>
                 )}
               </div>
@@ -458,9 +467,9 @@ function App() {
                     </Button>
                   </>
                 ) : (
-                  <Button onClick={moveToNext} className="col-span-3 gap-2" variant={currentCorrect ? 'default' : 'secondary'}>
+                  <Button onClick={moveToNext} className="col-span-3 gap-2" variant={showCorrectLabel ? 'default' : 'secondary'}>
                     <SkipForward className="w-4 h-4" />
-                    {currentCorrect ? '继续下一个' : '记下了，下一个'}
+                    {showCorrectLabel ? '继续下一个' : '记下了，下一个'}
                   </Button>
                 )}
               </div>
