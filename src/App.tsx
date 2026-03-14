@@ -3,21 +3,25 @@ import './App.css'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Progress } from '@/components/ui/progress'
 import {
-  Play,
+  ArrowRight,
+  BookOpen,
   CheckCircle2,
-  XCircle,
-  SkipForward,
+  Clock3,
+  Headphones,
+  Repeat2,
   RotateCcw,
+  Shuffle,
+  SkipForward,
+  Sparkles,
+  Trophy,
   Upload,
   Volume2,
-  BookOpen,
-  Trophy,
-  Shuffle,
-  Sparkles,
+  Waves,
+  XCircle,
 } from 'lucide-react'
 
 type AppState = 'input' | 'listening' | 'checking' | 'completed'
@@ -61,7 +65,9 @@ function App() {
   const [speechRate, setSpeechRate] = useState(0.8)
   const [dedupeWords, setDedupeWords] = useState(true)
   const [shuffleWordsEnabled, setShuffleWordsEnabled] = useState(false)
+
   const synthRef = useRef<SpeechSynthesis | null>(null)
+  const answerInputRef = useRef<HTMLInputElement | null>(null)
 
   useEffect(() => {
     synthRef.current = window.speechSynthesis
@@ -83,6 +89,12 @@ function App() {
   useEffect(() => {
     localStorage.setItem(LS_RATE_KEY, String(speechRate))
   }, [speechRate])
+
+  useEffect(() => {
+    if (appState === 'listening' || appState === 'checking') {
+      answerInputRef.current?.focus()
+    }
+  }, [appState, currentIndex])
 
   const parseWords = (text: string): string[] => {
     const parsed = text
@@ -109,7 +121,6 @@ function App() {
       const targetLang = /^[\u4e00-\u9fa5]/.test(word) ? 'zh' : 'en'
 
       synth.cancel()
-      // Android Chrome 偶发暂停，先恢复再播报
       synth.resume()
 
       const utterance = new SpeechSynthesisUtterance(word)
@@ -128,7 +139,6 @@ function App() {
       utterance.onend = () => setIsSpeaking(false)
       utterance.onerror = () => setIsSpeaking(false)
 
-      // 给移动端一点缓冲，避免 cancel 后立即 speak 被吞
       setTimeout(() => synth.speak(utterance), 60)
     },
     [speechRate]
@@ -173,7 +183,7 @@ function App() {
       ...prev,
       [wordKey]: {
         attempts: (prev[wordKey]?.attempts ?? 0) + 1,
-        mastered: prev[wordKey]?.mastered || isCorrect,
+        mastered: (prev[wordKey]?.mastered ?? false) || isCorrect,
       },
     }))
 
@@ -266,7 +276,10 @@ function App() {
       setInputText((prev) => (prev ? prev + '\n' + text : text))
     }
     reader.readAsText(file)
+    e.target.value = ''
   }
+
+  const parsedWordCount = useMemo(() => parseWords(inputText).length, [inputText, dedupeWords])
 
   const masteredCount = useMemo(
     () => Object.values(wordProgress).filter((w) => w.mastered).length,
@@ -284,268 +297,396 @@ function App() {
       : 0
 
   const currentWord = words[currentIndex] || ''
-  const currentCorrect = currentWord
-    ? normalizeWord(userInput) === normalizeWord(currentWord)
-    : false
+  const currentCorrect = currentWord ? normalizeWord(userInput) === normalizeWord(currentWord) : false
   const showCorrectLabel = currentCorrect && !revealedByDontKnow
+  const accuracy = baseWords.length > 0 ? Math.round((masteredCount / baseWords.length) * 100) : 0
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4 md:p-8">
-      <div className="max-w-2xl mx-auto">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl md:text-4xl font-bold text-indigo-900 flex items-center justify-center gap-3">
-            <BookOpen className="w-8 h-8 md:w-10 md:h-10" />
-            单词听写助手
-          </h1>
-          <p className="text-indigo-600 mt-2">输入单词，开始听写练习</p>
-        </div>
+    <div className="dictation-shell">
+      <div className="dictation-glow dictation-glow-left" />
+      <div className="dictation-glow dictation-glow-right" />
 
-        {appState === 'input' && (
-          <Card className="shadow-lg">
-            <CardHeader>
-              <CardTitle className="text-lg flex items-center gap-2">
-                <Upload className="w-5 h-5" />
-                输入单词列表
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <Textarea
-                placeholder="请输入要听写的单词，可以用空格、逗号或换行分隔...&#10;例如：apple banana orange"
-                value={inputText}
-                onChange={(e) => setInputText(e.target.value)}
-                className="min-h-[150px] resize-none"
-              />
+      <main className="mx-auto flex min-h-screen w-full max-w-7xl flex-col px-4 py-5 sm:px-6 lg:px-8">
+        <header className="premium-nav">
+          <div className="flex items-center gap-3">
+            <div className="premium-mark">
+              <Waves className="h-4 w-4" />
+            </div>
+            <div>
+              <p className="premium-kicker">Dictation Studio</p>
+              <p className="premium-subtle">Focused listening practice for word recall</p>
+            </div>
+          </div>
+          <div className="flex flex-wrap items-center gap-2">
+            <Badge className="premium-badge border-0 bg-white/10 text-[#f4ecdc]">Web Speech API</Badge>
+            <Badge className="premium-badge border-0 bg-white/10 text-[#f4ecdc]">Local autosave</Badge>
+          </div>
+        </header>
 
-              <div className="flex flex-wrap items-center gap-4">
-                <label className="flex items-center gap-2 cursor-pointer">
-                  <input type="file" accept=".txt" onChange={handleFileUpload} className="hidden" />
-                  <Button variant="outline" className="gap-2" asChild>
-                    <span>
-                      <Upload className="w-4 h-4" />
-                      上传文本文件
-                    </span>
-                  </Button>
-                </label>
+        <section className="grid flex-1 gap-6 pb-8 pt-6 lg:grid-cols-[1.25fr_0.75fr]">
+          <div className="space-y-6">
+            <section className="premium-hero">
+              <div className="space-y-4">
+                <p className="section-label">Premium practice workflow</p>
+                <h1 className="premium-title">单词听写，整理成更像成品的练习台。</h1>
+                <p className="premium-copy">
+                  粘贴单词表，直接开始。页面会自动保存输入内容、朗读语速和错题回看流程，适合快速复习也适合反复刷同一组词。
+                </p>
+              </div>
 
-                <div className="flex items-center gap-2">
-                  <span className="text-sm text-gray-600">语速:</span>
-                  <select
-                    value={speechRate}
-                    onChange={(e) => setSpeechRate(Number(e.target.value))}
-                    className="border rounded px-2 py-1 text-sm"
-                  >
-                    <option value={0.5}>慢速</option>
-                    <option value={0.8}>中速</option>
-                    <option value={1}>正常</option>
-                    <option value={1.2}>快速</option>
-                  </select>
+              <div className="hero-metrics">
+                <div className="metric-card">
+                  <span>Input</span>
+                  <strong>{parsedWordCount || 0}</strong>
+                  <small>ready words</small>
                 </div>
+                <div className="metric-card">
+                  <span>Review</span>
+                  <strong>2</strong>
+                  <small>auto retry rounds</small>
+                </div>
+                <div className="metric-card">
+                  <span>Flow</span>
+                  <strong>{shuffleWordsEnabled ? 'Random' : 'Linear'}</strong>
+                  <small>{dedupeWords ? 'deduplicated' : 'keep repeats'}</small>
+                </div>
+              </div>
+            </section>
 
-                <label className="flex items-center gap-2 text-sm text-gray-700">
-                  <input type="checkbox" checked={dedupeWords} onChange={(e) => setDedupeWords(e.target.checked)} />
-                  自动去重
-                </label>
-
-                <label className="flex items-center gap-2 text-sm text-gray-700">
-                  <input
-                    type="checkbox"
-                    checked={shuffleWordsEnabled}
-                    onChange={(e) => setShuffleWordsEnabled(e.target.checked)}
+            {appState === 'input' && (
+              <Card className="premium-panel border-white/10 bg-[#111823]/80 shadow-[0_30px_80px_rgba(2,6,23,0.45)] backdrop-blur">
+                <CardHeader className="gap-3 border-b border-white/10">
+                  <CardTitle className="flex items-center gap-2 text-xl text-[#f7f1e3]">
+                    <BookOpen className="h-5 w-5 text-[#d4a867]" />
+                    准备单词列表
+                  </CardTitle>
+                  <CardDescription className="text-[#c8c2b7]">
+                    支持空格、逗号、换行混合分隔。你也可以上传一个 `.txt` 文件接着编辑。
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-5 pt-6">
+                  <Textarea
+                    placeholder="例如：apple, balcony, delicate, memory, precise"
+                    value={inputText}
+                    onChange={(e) => setInputText(e.target.value)}
+                    className="min-h-[220px] resize-y border-white/10 bg-[#0b1119] text-base text-[#f7f1e3] placeholder:text-[#7e8795]"
                   />
-                  随机顺序
-                </label>
-              </div>
 
-              {inputText && (
-                <div className="text-sm text-gray-600 flex items-center gap-2">
-                  共 <Badge variant="secondary">{parseWords(inputText).length}</Badge> 个单词
-                  <Badge variant="outline" className="gap-1">
-                    <Sparkles className="w-3 h-3" />
-                    自动保存输入
-                  </Badge>
-                </div>
-              )}
+                  <div className="grid gap-4 xl:grid-cols-[auto_auto_1fr]">
+                    <label className="inline-flex cursor-pointer items-center">
+                      <input type="file" accept=".txt" onChange={handleFileUpload} className="hidden" />
+                      <Button
+                        variant="outline"
+                        className="h-11 gap-2 border-white/15 bg-white/5 px-4 text-[#f7f1e3] hover:bg-white/10"
+                        asChild
+                      >
+                        <span>
+                          <Upload className="h-4 w-4" />
+                          导入文本
+                        </span>
+                      </Button>
+                    </label>
 
-              <Button onClick={startDictation} disabled={!inputText.trim()} className="w-full gap-2" size="lg">
-                {shuffleWordsEnabled ? <Shuffle className="w-5 h-5" /> : <Play className="w-5 h-5" />}
-                开始听写
-              </Button>
-            </CardContent>
-          </Card>
-        )}
+                    <label className="setting-chip">
+                      <span>语速</span>
+                      <select
+                        value={speechRate}
+                        onChange={(e) => setSpeechRate(Number(e.target.value))}
+                        className="setting-select"
+                      >
+                        <option value={0.5}>0.5x 慢速</option>
+                        <option value={0.8}>0.8x 中速</option>
+                        <option value={1}>1.0x 正常</option>
+                        <option value={1.2}>1.2x 快速</option>
+                      </select>
+                    </label>
 
-        {(appState === 'listening' || appState === 'checking') && (
-          <Card className="shadow-lg">
-            <CardHeader className="pb-2">
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-lg flex items-center gap-2">
-                  <Volume2 className={`w-5 h-5 ${isSpeaking ? 'animate-pulse text-indigo-600' : ''}`} />
-                  听写中
-                  {reviewRound > 0 && (
-                    <Badge variant="secondary" className="ml-2">
-                      复习第 {reviewRound} 轮
-                    </Badge>
-                  )}
-                </CardTitle>
-                <div className="text-sm text-gray-600">
-                  {currentIndex + 1} / {words.length}
-                </div>
-              </div>
-              <Progress value={progressPercent} className="h-2" />
-            </CardHeader>
-
-            <CardContent className="space-y-6">
-              <div className="flex justify-center gap-6">
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-green-600">{masteredCount}</div>
-                  <div className="text-xs text-gray-500">已掌握</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-orange-600">{roundWrongWords.length}</div>
-                  <div className="text-xs text-gray-500">本轮错题</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-indigo-600">{baseWords.length}</div>
-                  <div className="text-xs text-gray-500">总计</div>
-                </div>
-              </div>
-
-              <div className="flex justify-center">
-                <Button variant="outline" onClick={replayWord} disabled={isSpeaking} className="gap-2">
-                  <RotateCcw className="w-4 h-4" />
-                  {isSpeaking ? '播放中...' : '重播单词'}
-                </Button>
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700">请输入你听到的单词：</label>
-                <Input
-                  value={userInput}
-                  onChange={(e) => setUserInput(e.target.value)}
-                  placeholder="在此输入单词..."
-                  className={`text-lg text-center py-6 ${
-                    appState === 'checking'
-                      ? showCorrectLabel
-                        ? 'border-green-500 bg-green-50'
-                        : 'border-red-500 bg-red-50'
-                      : ''
-                  }`}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' && appState === 'listening') checkAnswer()
-                    if (e.key === ' ' && appState === 'listening') {
-                      e.preventDefault()
-                      replayWord()
-                    }
-                  }}
-                  autoFocus
-                />
-                {appState === 'checking' && (
-                  <div className={`text-center text-sm ${showCorrectLabel ? 'text-green-600' : 'text-red-600'}`}>
-                    {showCorrectLabel ? '✓ 回答正确！' : `✗ 正确答案是：${currentWord}`}
+                    <div className="flex flex-wrap gap-3">
+                      <label className="toggle-chip">
+                        <input type="checkbox" checked={dedupeWords} onChange={(e) => setDedupeWords(e.target.checked)} />
+                        <span>自动去重</span>
+                      </label>
+                      <label className="toggle-chip">
+                        <input
+                          type="checkbox"
+                          checked={shuffleWordsEnabled}
+                          onChange={(e) => setShuffleWordsEnabled(e.target.checked)}
+                        />
+                        <span>随机顺序</span>
+                      </label>
+                    </div>
                   </div>
-                )}
-              </div>
 
-              <div className="grid grid-cols-3 gap-3">
-                {appState === 'listening' ? (
-                  <>
-                    <Button
-                      onClick={checkAnswer}
-                      disabled={!userInput.trim()}
-                      className="gap-2 bg-green-600 hover:bg-green-700"
-                    >
-                      <CheckCircle2 className="w-4 h-4" />
-                      确认核对
-                    </Button>
-                    <Button onClick={handleDontKnow} variant="destructive" className="gap-2">
-                      <XCircle className="w-4 h-4" />
-                      我不会
-                    </Button>
-                    <Button onClick={moveToNext} variant="outline" className="gap-2">
-                      <SkipForward className="w-4 h-4" />
-                      下一个
-                    </Button>
-                  </>
-                ) : (
-                  <Button onClick={moveToNext} className="col-span-3 gap-2" variant={showCorrectLabel ? 'default' : 'secondary'}>
-                    <SkipForward className="w-4 h-4" />
-                    {showCorrectLabel ? '继续下一个' : '记下了，下一个'}
-                  </Button>
-                )}
-              </div>
-            </CardContent>
-          </Card>
-        )}
-
-        {appState === 'completed' && (
-          <Card className="shadow-lg">
-            <CardHeader>
-              <CardTitle className="text-center text-2xl flex items-center justify-center gap-2">
-                <Trophy className="w-8 h-8 text-yellow-500" />
-                听写完成！
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="bg-indigo-50 rounded-lg p-6">
-                <div className="text-center mb-4">
-                  <div className="text-5xl font-bold text-indigo-600">
-                    {baseWords.length > 0 ? Math.round((masteredCount / baseWords.length) * 100) : 0}%
-                  </div>
-                  <div className="text-gray-600 mt-1">正确率</div>
-                </div>
-
-                <div className="grid grid-cols-3 gap-4 text-center">
-                  <div>
-                    <div className="text-xl font-semibold text-green-600">{masteredCount}</div>
-                    <div className="text-xs text-gray-500">掌握单词</div>
-                  </div>
-                  <div>
-                    <div className="text-xl font-semibold text-red-600">{baseWords.length - masteredCount}</div>
-                    <div className="text-xs text-gray-500">需加强</div>
-                  </div>
-                  <div>
-                    <div className="text-xl font-semibold text-indigo-600">{baseWords.length}</div>
-                    <div className="text-xs text-gray-500">总单词数</div>
-                  </div>
-                </div>
-              </div>
-
-              {wrongWordsFinal.length > 0 && (
-                <div>
-                  <h3 className="font-semibold text-gray-700 mb-2">需要加强的单词：</h3>
-                  <div className="flex flex-wrap gap-2">
-                    {wrongWordsFinal.map((word, i) => (
-                      <Badge key={`${word}-${i}`} variant="destructive" className="text-sm py-1 px-3">
-                        {word}
+                  <div className="flex flex-wrap items-center justify-between gap-3 border-t border-white/10 pt-5">
+                    <div className="flex flex-wrap items-center gap-2 text-sm text-[#c8c2b7]">
+                      <Badge className="premium-count border border-[#d4a867]/30 bg-[#d4a867]/10 text-[#f2d5a5]">
+                        {parsedWordCount} 个单词
                       </Badge>
-                    ))}
+                      <Badge className="premium-count border border-white/10 bg-white/5 text-[#c8c2b7]">
+                        自动保存已开启
+                      </Badge>
+                    </div>
+                    <Button
+                      onClick={startDictation}
+                      disabled={!inputText.trim()}
+                      className="h-11 min-w-[180px] gap-2 rounded-full bg-[#d4a867] px-5 text-[#1a1f18] hover:bg-[#e0b97f]"
+                    >
+                      {shuffleWordsEnabled ? <Shuffle className="h-4 w-4" /> : <Headphones className="h-4 w-4" />}
+                      开始听写
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {(appState === 'listening' || appState === 'checking') && (
+              <Card className="premium-panel border-white/10 bg-[#111823]/82 shadow-[0_30px_80px_rgba(2,6,23,0.45)] backdrop-blur">
+                <CardHeader className="gap-4 border-b border-white/10">
+                  <div className="flex flex-wrap items-start justify-between gap-4">
+                    <div>
+                      <p className="section-label mb-2">Live session</p>
+                      <CardTitle className="flex items-center gap-2 text-2xl text-[#f7f1e3]">
+                        <Volume2 className={`h-5 w-5 text-[#d4a867] ${isSpeaking ? 'speaking-indicator' : ''}`} />
+                        正在听写
+                      </CardTitle>
+                      <CardDescription className="mt-2 text-[#c8c2b7]">
+                        Enter 核对答案，空格重播当前单词。
+                      </CardDescription>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      {reviewRound > 0 && (
+                        <Badge className="premium-badge border border-[#d4a867]/30 bg-[#d4a867]/10 text-[#f2d5a5]">
+                          复习第 {reviewRound} 轮
+                        </Badge>
+                      )}
+                      <Badge className="premium-badge border border-white/10 bg-white/5 text-[#f4ecdc]">
+                        {currentIndex + 1} / {words.length}
+                      </Badge>
+                    </div>
+                  </div>
+                  <Progress value={progressPercent} className="h-2.5 bg-white/10 [&_[data-slot=progress-indicator]]:bg-[#d4a867]" />
+                </CardHeader>
+
+                <CardContent className="space-y-6 pt-6">
+                  <div className="grid gap-3 sm:grid-cols-3">
+                    <div className="session-stat">
+                      <span>掌握</span>
+                      <strong>{masteredCount}</strong>
+                    </div>
+                    <div className="session-stat">
+                      <span>本轮错题</span>
+                      <strong>{roundWrongWords.length}</strong>
+                    </div>
+                    <div className="session-stat">
+                      <span>总词数</span>
+                      <strong>{baseWords.length}</strong>
+                    </div>
+                  </div>
+
+                  <div className="listening-stage">
+                    <button
+                      type="button"
+                      onClick={replayWord}
+                      disabled={isSpeaking}
+                      className={`speaker-button ${isSpeaking ? 'speaker-button-active' : ''}`}
+                    >
+                      <div className="speaker-rings" aria-hidden="true">
+                        <span />
+                        <span />
+                      </div>
+                      <Volume2 className="relative z-10 h-8 w-8" />
+                    </button>
+                    <div className="space-y-2 text-center">
+                      <p className="section-label">Current prompt</p>
+                      <h2 className="text-2xl text-[#f7f1e3] sm:text-3xl">{isSpeaking ? 'Listening...' : 'Ready for your answer'}</h2>
+                      <p className="mx-auto max-w-xl text-sm leading-6 text-[#9ca5b3]">
+                        播放按钮可以重复当前单词。不会拼写时可以直接标记进入错题复习。
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="space-y-3">
+                    <label className="section-label">Type what you hear</label>
+                    <Input
+                      ref={answerInputRef}
+                      value={userInput}
+                      onChange={(e) => setUserInput(e.target.value)}
+                      placeholder="在这里输入单词"
+                      className={`h-14 border-white/10 bg-[#0b1119] px-5 text-center text-lg text-[#f7f1e3] placeholder:text-[#7e8795] ${
+                        appState === 'checking'
+                          ? showCorrectLabel
+                            ? 'border-emerald-500/60 bg-emerald-500/10'
+                            : 'border-rose-500/60 bg-rose-500/10'
+                          : ''
+                      }`}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' && appState === 'listening') checkAnswer()
+                        if (e.key === ' ' && appState === 'listening') {
+                          e.preventDefault()
+                          replayWord()
+                        }
+                      }}
+                    />
+
+                    {appState === 'checking' && (
+                      <div className={`answer-feedback ${showCorrectLabel ? 'answer-feedback-success' : 'answer-feedback-error'}`}>
+                        {showCorrectLabel ? '回答正确，继续下一题。' : `正确答案：${currentWord}`}
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="grid gap-3 sm:grid-cols-3">
+                    {appState === 'listening' ? (
+                      <>
+                        <Button
+                          onClick={checkAnswer}
+                          disabled={!userInput.trim()}
+                          className="h-11 gap-2 rounded-full bg-[#d4a867] text-[#1a1f18] hover:bg-[#e0b97f]"
+                        >
+                          <CheckCircle2 className="h-4 w-4" />
+                          确认核对
+                        </Button>
+                        <Button
+                          onClick={handleDontKnow}
+                          variant="outline"
+                          className="h-11 gap-2 rounded-full border-rose-400/30 bg-rose-400/10 text-rose-100 hover:bg-rose-400/20"
+                        >
+                          <XCircle className="h-4 w-4" />
+                          我不会
+                        </Button>
+                        <Button
+                          onClick={moveToNext}
+                          variant="outline"
+                          className="h-11 gap-2 rounded-full border-white/10 bg-white/5 text-[#f4ecdc] hover:bg-white/10"
+                        >
+                          <SkipForward className="h-4 w-4" />
+                          跳过
+                        </Button>
+                      </>
+                    ) : (
+                      <Button
+                        onClick={moveToNext}
+                        className="h-11 gap-2 rounded-full bg-[#d4a867] text-[#1a1f18] hover:bg-[#e0b97f] sm:col-span-3"
+                      >
+                        <ArrowRight className="h-4 w-4" />
+                        {showCorrectLabel ? '继续下一个' : '记下了，继续'}
+                      </Button>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {appState === 'completed' && (
+              <Card className="premium-panel border-white/10 bg-[#111823]/82 shadow-[0_30px_80px_rgba(2,6,23,0.45)] backdrop-blur">
+                <CardHeader className="gap-3 border-b border-white/10">
+                  <div className="flex flex-wrap items-center justify-between gap-4">
+                    <div>
+                      <p className="section-label mb-2">Session complete</p>
+                      <CardTitle className="flex items-center gap-2 text-2xl text-[#f7f1e3]">
+                        <Trophy className="h-6 w-6 text-[#d4a867]" />
+                        听写完成
+                      </CardTitle>
+                    </div>
+                    <Badge className="premium-badge border border-[#d4a867]/30 bg-[#d4a867]/10 text-[#f2d5a5]">
+                      Accuracy {accuracy}%
+                    </Badge>
+                  </div>
+                </CardHeader>
+                <CardContent className="space-y-6 pt-6">
+                  <div className="result-grid">
+                    <div className="result-score">
+                      <span>正确率</span>
+                      <strong>{accuracy}%</strong>
+                    </div>
+                    <div className="session-stat">
+                      <span>掌握单词</span>
+                      <strong>{masteredCount}</strong>
+                    </div>
+                    <div className="session-stat">
+                      <span>需加强</span>
+                      <strong>{baseWords.length - masteredCount}</strong>
+                    </div>
+                  </div>
+
+                  {wrongWordsFinal.length > 0 ? (
+                    <div className="space-y-3">
+                      <p className="section-label">Needs more repetition</p>
+                      <div className="flex flex-wrap gap-2">
+                        {wrongWordsFinal.map((word, i) => (
+                          <Badge
+                            key={`${word}-${i}`}
+                            className="rounded-full border border-rose-400/20 bg-rose-400/10 px-3 py-1 text-rose-100"
+                          >
+                            {word}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="rounded-3xl border border-emerald-400/20 bg-emerald-400/10 p-5 text-sm text-emerald-50">
+                      全部掌握，没有留下错题。
+                    </div>
+                  )}
+
+                  <Button
+                    onClick={restart}
+                    className="h-11 w-full gap-2 rounded-full bg-[#d4a867] text-[#1a1f18] hover:bg-[#e0b97f]"
+                  >
+                    <RotateCcw className="h-4 w-4" />
+                    重新开始
+                  </Button>
+                </CardContent>
+              </Card>
+            )}
+          </div>
+
+          <aside className="space-y-6">
+            <Card className="premium-panel border-white/10 bg-[rgba(18,24,35,0.72)] shadow-[0_30px_80px_rgba(2,6,23,0.35)] backdrop-blur">
+              <CardHeader className="gap-3 border-b border-white/10">
+                <CardTitle className="text-lg text-[#f7f1e3]">Session standards</CardTitle>
+                <CardDescription className="text-[#c8c2b7]">
+                  一页完成输入、播放、核对和复习，不切走页面。
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4 pt-6">
+                <div className="feature-item">
+                  <Sparkles className="h-4 w-4 text-[#d4a867]" />
+                  <div>
+                    <p>自动保存</p>
+                    <span>刷新后保留单词列表与语速设置。</span>
                   </div>
                 </div>
-              )}
+                <div className="feature-item">
+                  <Repeat2 className="h-4 w-4 text-[#d4a867]" />
+                  <div>
+                    <p>错题复习</p>
+                    <span>答错或不会的单词自动回流，最多两轮。</span>
+                  </div>
+                </div>
+                <div className="feature-item">
+                  <Clock3 className="h-4 w-4 text-[#d4a867]" />
+                  <div>
+                    <p>轻量静态部署</p>
+                    <span>不依赖后端，适合直接挂在个人站点中。</span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
 
-              <Button onClick={restart} className="w-full gap-2" size="lg">
-                <RotateCcw className="w-5 h-5" />
-                重新开始
-              </Button>
-            </CardContent>
-          </Card>
-        )}
-
-        {appState === 'input' && (
-          <Card className="mt-6 shadow">
-            <CardContent className="pt-6">
-              <h3 className="font-semibold text-gray-700 mb-3">优化后使用说明：</h3>
-              <ol className="list-decimal list-inside space-y-2 text-sm text-gray-600">
-                <li>支持粘贴 / 上传 .txt，一键导入单词</li>
-                <li>可选自动去重、随机顺序，更接近真实记忆场景</li>
-                <li>输入内容和语速会自动保存，下次打开无需重填</li>
-                <li>Enter 直接核对，空格快速重播（听写时）</li>
-                <li>答错单词自动进入复习循环，最多复习 2 轮</li>
-              </ol>
-            </CardContent>
-          </Card>
-        )}
-      </div>
+            <Card className="premium-panel border-white/10 bg-[rgba(18,24,35,0.72)] shadow-[0_30px_80px_rgba(2,6,23,0.35)] backdrop-blur">
+              <CardHeader className="gap-3 border-b border-white/10">
+                <CardTitle className="text-lg text-[#f7f1e3]">Recommended flow</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3 pt-6 text-sm leading-6 text-[#c8c2b7]">
+                <p>1. 贴入本次要练的单词表，先决定是否去重和打乱顺序。</p>
+                <p>2. 用 Enter 快速核对，卡壳时直接标记“我不会”。</p>
+                <p>3. 完成后只盯着错题列表，重新过一遍更高效。</p>
+              </CardContent>
+            </Card>
+          </aside>
+        </section>
+      </main>
     </div>
   )
 }

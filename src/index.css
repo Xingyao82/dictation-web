@@ -4,64 +4,34 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 240 10% 3.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 240 10% 3.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 3.9%;
-    --primary: 240 5.9% 10%;
-    --primary-foreground: 0 0% 98%;
-    --secondary: 240 4.8% 95.9%;
-    --secondary-foreground: 240 5.9% 10%;
-    --muted: 240 4.8% 95.9%;
-    --muted-foreground: 240 3.8% 46.1%;
-    --accent: 240 4.8% 95.9%;
-    --accent-foreground: 240 5.9% 10%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 240 5.9% 90%;
-    --input: 240 5.9% 90%;
-    --ring: 240 5.9% 10%;
-    --radius: 0.625rem;
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 240 5.9% 10%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 240 4.8% 95.9%;
-    --sidebar-accent-foreground: 240 5.9% 10%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
-  }
-
-  .dark {
-    --background: 240 10% 3.9%;
-    --foreground: 0 0% 98%;
-    --card: 240 10% 3.9%;
-    --card-foreground: 0 0% 98%;
-    --popover: 240 10% 3.9%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 0 0% 98%;
-    --primary-foreground: 240 5.9% 10%;
-    --secondary: 240 3.7% 15.9%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 240 3.7% 15.9%;
-    --muted-foreground: 240 5% 64.9%;
-    --accent: 240 3.7% 15.9%;
-    --accent-foreground: 0 0% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 240 3.7% 15.9%;
-    --input: 240 3.7% 15.9%;
-    --ring: 240 4.9% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --background: 216 37% 7%;
+    --foreground: 40 38% 93%;
+    --card: 218 33% 11%;
+    --card-foreground: 40 38% 93%;
+    --popover: 218 33% 11%;
+    --popover-foreground: 40 38% 93%;
+    --primary: 37 55% 62%;
+    --primary-foreground: 217 33% 10%;
+    --secondary: 216 24% 18%;
+    --secondary-foreground: 40 38% 93%;
+    --muted: 215 19% 19%;
+    --muted-foreground: 216 12% 65%;
+    --accent: 214 26% 16%;
+    --accent-foreground: 40 38% 93%;
+    --destructive: 349 79% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 217 18% 22%;
+    --input: 217 22% 14%;
+    --ring: 37 55% 62%;
+    --radius: 1rem;
+    --sidebar-background: 218 33% 11%;
+    --sidebar-foreground: 40 38% 93%;
+    --sidebar-primary: 37 55% 62%;
+    --sidebar-primary-foreground: 217 33% 10%;
+    --sidebar-accent: 214 26% 16%;
+    --sidebar-accent-foreground: 40 38% 93%;
+    --sidebar-border: 217 18% 22%;
+    --sidebar-ring: 37 55% 62%;
   }
 }
 
@@ -69,7 +39,55 @@
   * {
     @apply border-border;
   }
-  body {
-    @apply bg-background text-foreground;
+
+  html {
+    scroll-behavior: smooth;
   }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    margin: 0;
+    min-width: 320px;
+    min-height: 100vh;
+    font-family: "Avenir Next", "Segoe UI", "Helvetica Neue", sans-serif;
+    background:
+      radial-gradient(circle at top left, rgba(212, 168, 103, 0.12), transparent 30%),
+      radial-gradient(circle at bottom right, rgba(107, 124, 170, 0.18), transparent 35%),
+      linear-gradient(180deg, #0d131b 0%, #090d14 100%);
+  }
+
+  button,
+  input,
+  textarea,
+  select {
+    font: inherit;
+  }
+
+  ::selection {
+    background: rgba(212, 168, 103, 0.32);
+    color: #fff8eb;
+  }
+}
+
+#root {
+  width: 100%;
+  min-height: 100vh;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(212, 168, 103, 0.35);
+  border-radius: 999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(212, 168, 103, 0.5);
 }
