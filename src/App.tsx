@@ -303,8 +303,8 @@ function App() {
           <div className="space-y-6">
 
             {appState === 'input' && (
-              <Card className="premium-panel border-slate-200 bg-white shadow-sm">
-                <CardHeader className="gap-3 border-b border-slate-200">
+              <Card className="premium-panel border-slate-200/80 bg-white shadow-none">
+                <CardHeader className="gap-3 border-b border-slate-200/80">
                   <CardTitle className="flex items-center gap-2 text-xl text-slate-900">
                     <BookOpen className="h-5 w-5 text-[#0071e3]" />
                     准备单词列表
@@ -326,7 +326,7 @@ function App() {
                       <input type="file" accept=".txt" onChange={handleFileUpload} className="hidden" />
                       <Button
                         variant="outline"
-                        className="h-11 gap-2 border-slate-200 bg-slate-50 px-4 text-slate-900 hover:bg-slate-100"
+                        className="h-11 gap-2 border-slate-200/80 bg-white px-4 text-slate-900 hover:bg-slate-100"
                         asChild
                       >
                         <span>
@@ -366,7 +366,7 @@ function App() {
                     </div>
                   </div>
 
-                  <div className="flex flex-wrap items-center justify-between gap-3 border-t border-slate-200 pt-5">
+                  <div className="flex flex-wrap items-center justify-between gap-3 border-t border-slate-200/80 pt-5">
                     <div className="flex flex-wrap items-center gap-2 text-sm text-slate-500">
                       <Badge className="premium-count border border-blue-200 bg-blue-50 text-blue-700">
                         {parsedWordCount} 个单词
@@ -378,7 +378,7 @@ function App() {
                     <Button
                       onClick={startDictation}
                       disabled={!inputText.trim()}
-                      className="h-11 min-w-[180px] gap-2 rounded-full bg-[#0071e3] px-5 text-white hover:bg-[#005bb5]"
+                      className="h-11 min-w-[180px] gap-2 rounded-full bg-[#0071e3] px-5 text-white hover:bg-[#0068d1]"
                     >
                       {shuffleWordsEnabled ? <Shuffle className="h-4 w-4" /> : <Headphones className="h-4 w-4" />}
                       开始听写
@@ -389,8 +389,8 @@ function App() {
             )}
 
             {(appState === 'listening' || appState === 'checking') && (
-              <Card className="premium-panel border-slate-200 bg-white shadow-sm">
-                <CardHeader className="gap-4 border-b border-slate-200">
+              <Card className="premium-panel border-slate-200/80 bg-white shadow-none">
+                <CardHeader className="gap-4 border-b border-slate-200/80">
                   <div className="flex flex-wrap items-start justify-between gap-4">
                     <div>
                       <CardTitle className="flex items-center gap-2 text-2xl text-slate-900">
@@ -407,7 +407,7 @@ function App() {
                           复习第 {reviewRound} 轮
                         </Badge>
                       )}
-                      <Badge className="premium-badge border border-slate-200 bg-slate-50 text-slate-700">
+                      <Badge className="premium-badge border border-slate-200/80 bg-white text-slate-700">
                         {currentIndex + 1} / {words.length}
                       </Badge>
                     </div>
@@ -466,7 +466,7 @@ function App() {
                         <Button
                           onClick={checkAnswer}
                           disabled={!userInput.trim()}
-                          className="h-11 gap-2 rounded-full bg-[#0071e3] text-white hover:bg-[#005bb5]"
+                          className="h-11 gap-2 rounded-full bg-[#0071e3] text-white hover:bg-[#0068d1]"
                         >
                           <CheckCircle2 className="h-4 w-4" />
                           确认核对
@@ -482,7 +482,7 @@ function App() {
                         <Button
                           onClick={moveToNext}
                           variant="outline"
-                          className="h-11 gap-2 rounded-full border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100"
+                          className="h-11 gap-2 rounded-full border-slate-200/80 bg-white text-slate-700 hover:bg-slate-100"
                         >
                           <SkipForward className="h-4 w-4" />
                           跳过
@@ -491,7 +491,7 @@ function App() {
                     ) : (
                       <Button
                         onClick={moveToNext}
-                        className="h-11 gap-2 rounded-full bg-[#0071e3] text-white hover:bg-[#005bb5] sm:col-span-3"
+                        className="h-11 gap-2 rounded-full bg-[#0071e3] text-white hover:bg-[#0068d1] sm:col-span-3"
                       >
                         <ArrowRight className="h-4 w-4" />
                         {showCorrectLabel ? '继续下一个' : '记下了，继续'}
@@ -503,8 +503,8 @@ function App() {
             )}
 
             {appState === 'completed' && (
-              <Card className="premium-panel border-slate-200 bg-white shadow-sm">
-                <CardHeader className="gap-3 border-b border-slate-200">
+              <Card className="premium-panel border-slate-200/80 bg-white shadow-none">
+                <CardHeader className="gap-3 border-b border-slate-200/80">
                   <div className="flex flex-wrap items-center justify-between gap-4">
                     <div>
                       <CardTitle className="flex items-center gap-2 text-2xl text-slate-900">
@@ -554,7 +554,7 @@ function App() {
 
                   <Button
                     onClick={restart}
-                    className="h-11 w-full gap-2 rounded-full bg-[#0071e3] text-white hover:bg-[#005bb5]"
+                    className="h-11 w-full gap-2 rounded-full bg-[#0071e3] text-white hover:bg-[#0068d1]"
                   >
                     <RotateCcw className="h-4 w-4" />
                     重新开始

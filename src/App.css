@@ -9,7 +9,7 @@
   height: 38rem;
   border-radius: 999px;
   filter: blur(80px);
-  opacity: 0.1;
+  opacity: 0.04;
   pointer-events: none;
 }
 
@@ -31,9 +31,9 @@
   gap: 1rem;
   align-items: center;
   padding: 1rem 1.25rem;
-  border: 1px solid rgba(15, 23, 42, 0.08);
+  border: 1px solid rgba(15, 23, 42, 0.06);
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.88);
+  background: #ffffff;
   backdrop-filter: blur(16px);
 }
 
@@ -152,9 +152,9 @@
   gap: 0.8rem;
   min-height: 2.75rem;
   padding: 0.5rem 0.95rem;
-  border: 1px solid rgba(15, 23, 42, 0.08);
+  border: 1px solid rgba(15, 23, 42, 0.06);
   border-radius: 999px;
-  background: #f7f8fa;
+  background: #ffffff;
   color: #111827;
 }
 
@@ -175,9 +175,9 @@
   gap: 0.6rem;
   min-height: 2.75rem;
   padding: 0.5rem 0.95rem;
-  border: 1px solid rgba(15, 23, 42, 0.08);
+  border: 1px solid rgba(15, 23, 42, 0.06);
   border-radius: 999px;
-  background: #f7f8fa;
+  background: #ffffff;
   color: #111827;
 }
 
@@ -190,9 +190,9 @@
   justify-items: center;
   gap: 1.25rem;
   padding: 1.6rem;
-  border: 1px solid rgba(15, 23, 42, 0.08);
+  border: 1px solid rgba(15, 23, 42, 0.06);
   border-radius: 2rem;
-  background: #f7f8fa;
+  background: #ffffff;
 }
 
 .speaker-button {
@@ -206,13 +206,13 @@
   border-radius: 999px;
   background: linear-gradient(135deg, #d4a867, #b58548);
   color: #111823;
-  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.28);
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .speaker-button:hover {
   transform: translateY(-2px);
-  box-shadow: 0 24px 50px rgba(0, 0, 0, 0.35);
+  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.1);
 }
 
 .speaker-button:disabled {
