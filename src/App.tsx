@@ -6,7 +6,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Progress } from '@/components/ui/progress'
-import { ArrowRight, BookOpen, CheckCircle2, Headphones, RotateCcw, Shuffle, SkipForward, Trophy, Upload, Volume2, Waves, XCircle } from 'lucide-react'
+import { ArrowRight, BookOpen, CheckCircle2, Headphones, RotateCcw, Shuffle, SkipForward, Trophy, Upload, Volume2, XCircle } from 'lucide-react'
 
 type AppState = 'input' | 'listening' | 'checking' | 'completed'
 
@@ -291,14 +291,6 @@ function App() {
       <div className="dictation-glow dictation-glow-right" />
 
       <main className="mx-auto flex min-h-screen w-full max-w-7xl flex-col px-4 py-5 sm:px-6 lg:px-8">
-        <header className="premium-nav">
-          <div className="flex items-center gap-3">
-            <div className="premium-mark">
-              <Waves className="h-4 w-4" />
-            </div>
-          </div>
-        </header>
-
         <section className="grid flex-1 gap-6 pb-8 pt-6">
           <div className="space-y-6">
 
