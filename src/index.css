@@ -4,34 +4,34 @@
 
 @layer base {
   :root {
-    --background: 216 37% 7%;
-    --foreground: 40 38% 93%;
-    --card: 218 33% 11%;
-    --card-foreground: 40 38% 93%;
-    --popover: 218 33% 11%;
-    --popover-foreground: 40 38% 93%;
-    --primary: 37 55% 62%;
-    --primary-foreground: 217 33% 10%;
-    --secondary: 216 24% 18%;
-    --secondary-foreground: 40 38% 93%;
-    --muted: 215 19% 19%;
-    --muted-foreground: 216 12% 65%;
-    --accent: 214 26% 16%;
-    --accent-foreground: 40 38% 93%;
+    --background: 0 0% 100%;
+    --foreground: 222 20% 12%;
+    --card: 0 0% 100%;
+    --card-foreground: 222 20% 12%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 20% 12%;
+    --primary: 211 100% 45%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 210 20% 96%;
+    --secondary-foreground: 222 20% 12%;
+    --muted: 210 20% 96%;
+    --muted-foreground: 215 10% 42%;
+    --accent: 210 20% 96%;
+    --accent-foreground: 222 20% 12%;
     --destructive: 349 79% 60%;
     --destructive-foreground: 0 0% 100%;
-    --border: 217 18% 22%;
-    --input: 217 22% 14%;
-    --ring: 37 55% 62%;
+    --border: 214 18% 90%;
+    --input: 214 18% 92%;
+    --ring: 211 100% 45%;
     --radius: 1rem;
-    --sidebar-background: 218 33% 11%;
-    --sidebar-foreground: 40 38% 93%;
-    --sidebar-primary: 37 55% 62%;
-    --sidebar-primary-foreground: 217 33% 10%;
-    --sidebar-accent: 214 26% 16%;
-    --sidebar-accent-foreground: 40 38% 93%;
-    --sidebar-border: 217 18% 22%;
-    --sidebar-ring: 37 55% 62%;
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 222 20% 12%;
+    --sidebar-primary: 211 100% 45%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 210 20% 96%;
+    --sidebar-accent-foreground: 222 20% 12%;
+    --sidebar-border: 214 18% 90%;
+    --sidebar-ring: 211 100% 45%;
   }
 }
 
@@ -50,10 +50,7 @@
     min-width: 320px;
     min-height: 100vh;
     font-family: "Avenir Next", "Segoe UI", "Helvetica Neue", sans-serif;
-    background:
-      radial-gradient(circle at top left, rgba(212, 168, 103, 0.12), transparent 30%),
-      radial-gradient(circle at bottom right, rgba(107, 124, 170, 0.18), transparent 35%),
-      linear-gradient(180deg, #0d131b 0%, #090d14 100%);
+    background: linear-gradient(180deg, #ffffff 0%, #f7f8fa 100%);
   }
 
   button,

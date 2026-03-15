@@ -9,7 +9,7 @@
   height: 38rem;
   border-radius: 999px;
   filter: blur(80px);
-  opacity: 0.22;
+  opacity: 0.1;
   pointer-events: none;
 }
 
@@ -31,9 +31,9 @@
   gap: 1rem;
   align-items: center;
   padding: 1rem 1.25rem;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(15, 23, 42, 0.08);
   border-radius: 999px;
-  background: rgba(11, 17, 25, 0.68);
+  background: rgba(255, 255, 255, 0.88);
   backdrop-filter: blur(16px);
 }
 
@@ -152,10 +152,10 @@
   gap: 0.8rem;
   min-height: 2.75rem;
   padding: 0.5rem 0.95rem;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(15, 23, 42, 0.08);
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.03);
-  color: #f7f1e3;
+  background: #f7f8fa;
+  color: #111827;
 }
 
 .setting-select {
@@ -175,10 +175,10 @@
   gap: 0.6rem;
   min-height: 2.75rem;
   padding: 0.5rem 0.95rem;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(15, 23, 42, 0.08);
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.03);
-  color: #f7f1e3;
+  background: #f7f8fa;
+  color: #111827;
 }
 
 .toggle-chip input {
@@ -190,11 +190,9 @@
   justify-items: center;
   gap: 1.25rem;
   padding: 1.6rem;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(15, 23, 42, 0.08);
   border-radius: 2rem;
-  background:
-    radial-gradient(circle at top, rgba(212, 168, 103, 0.14), rgba(212, 168, 103, 0) 35%),
-    rgba(255, 255, 255, 0.03);
+  background: #f7f8fa;
 }
 
 .speaker-button {
@@ -250,13 +248,13 @@
 }
 
 .answer-feedback-success {
-  background: rgba(16, 185, 129, 0.12);
-  color: #b6f2d6;
+  background: rgba(16, 185, 129, 0.1);
+  color: #065f46;
 }
 
 .answer-feedback-error {
-  background: rgba(244, 63, 94, 0.12);
-  color: #fecdd3;
+  background: rgba(244, 63, 94, 0.1);
+  color: #9f1239;
 }
 
 .result-grid {
