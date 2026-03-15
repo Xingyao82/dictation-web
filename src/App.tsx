@@ -312,10 +312,6 @@ function App() {
             <div className="premium-mark">
               <Waves className="h-4 w-4" />
             </div>
-            <div>
-              <p className="premium-kicker">Dictation Studio</p>
-              <p className="premium-subtle">Focused listening practice for word recall</p>
-            </div>
           </div>
           <div className="flex flex-wrap items-center gap-2">
             <Badge className="premium-badge border-0 bg-white/10 text-[#f4ecdc]">Web Speech API</Badge>
@@ -326,13 +322,6 @@ function App() {
         <section className="grid flex-1 gap-6 pb-8 pt-6 lg:grid-cols-[1.25fr_0.75fr]">
           <div className="space-y-6">
             <section className="premium-hero">
-              <div className="space-y-4">
-                <p className="section-label">Premium practice workflow</p>
-                <h1 className="premium-title">单词听写，整理成更像成品的练习台。</h1>
-                <p className="premium-copy">
-                  粘贴单词表，直接开始。页面会自动保存输入内容、朗读语速和错题回看流程，适合快速复习也适合反复刷同一组词。
-                </p>
-              </div>
 
               <div className="hero-metrics">
                 <div className="metric-card">
