@@ -6,23 +6,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Progress } from '@/components/ui/progress'
-import {
-  ArrowRight,
-  BookOpen,
-  CheckCircle2,
-  Clock3,
-  Headphones,
-  Repeat2,
-  RotateCcw,
-  Shuffle,
-  SkipForward,
-  Sparkles,
-  Trophy,
-  Upload,
-  Volume2,
-  Waves,
-  XCircle,
-} from 'lucide-react'
+import { ArrowRight, BookOpen, CheckCircle2, Headphones, RotateCcw, Shuffle, SkipForward, Trophy, Upload, Volume2, Waves, XCircle } from 'lucide-react'
 
 type AppState = 'input' | 'listening' | 'checking' | 'completed'
 
@@ -313,34 +297,10 @@ function App() {
               <Waves className="h-4 w-4" />
             </div>
           </div>
-          <div className="flex flex-wrap items-center gap-2">
-            <Badge className="premium-badge border-0 bg-white/10 text-[#f4ecdc]">Web Speech API</Badge>
-            <Badge className="premium-badge border-0 bg-white/10 text-[#f4ecdc]">Local autosave</Badge>
-          </div>
         </header>
 
-        <section className="grid flex-1 gap-6 pb-8 pt-6 lg:grid-cols-[1.25fr_0.75fr]">
+        <section className="grid flex-1 gap-6 pb-8 pt-6">
           <div className="space-y-6">
-            <section className="premium-hero">
-
-              <div className="hero-metrics">
-                <div className="metric-card">
-                  <span>Input</span>
-                  <strong>{parsedWordCount || 0}</strong>
-                  <small>ready words</small>
-                </div>
-                <div className="metric-card">
-                  <span>Review</span>
-                  <strong>2</strong>
-                  <small>auto retry rounds</small>
-                </div>
-                <div className="metric-card">
-                  <span>Flow</span>
-                  <strong>{shuffleWordsEnabled ? 'Random' : 'Linear'}</strong>
-                  <small>{dedupeWords ? 'deduplicated' : 'keep repeats'}</small>
-                </div>
-              </div>
-            </section>
 
             {appState === 'input' && (
               <Card className="premium-panel border-white/10 bg-[#111823]/80 shadow-[0_30px_80px_rgba(2,6,23,0.45)] backdrop-blur">
@@ -433,7 +393,6 @@ function App() {
                 <CardHeader className="gap-4 border-b border-white/10">
                   <div className="flex flex-wrap items-start justify-between gap-4">
                     <div>
-                      <p className="section-label mb-2">Live session</p>
                       <CardTitle className="flex items-center gap-2 text-2xl text-[#f7f1e3]">
                         <Volume2 className={`h-5 w-5 text-[#d4a867] ${isSpeaking ? 'speaking-indicator' : ''}`} />
                         正在听写
@@ -457,21 +416,6 @@ function App() {
                 </CardHeader>
 
                 <CardContent className="space-y-6 pt-6">
-                  <div className="grid gap-3 sm:grid-cols-3">
-                    <div className="session-stat">
-                      <span>掌握</span>
-                      <strong>{masteredCount}</strong>
-                    </div>
-                    <div className="session-stat">
-                      <span>本轮错题</span>
-                      <strong>{roundWrongWords.length}</strong>
-                    </div>
-                    <div className="session-stat">
-                      <span>总词数</span>
-                      <strong>{baseWords.length}</strong>
-                    </div>
-                  </div>
-
                   <div className="listening-stage">
                     <button
                       type="button"
@@ -485,17 +429,9 @@ function App() {
                       </div>
                       <Volume2 className="relative z-10 h-8 w-8" />
                     </button>
-                    <div className="space-y-2 text-center">
-                      <p className="section-label">Current prompt</p>
-                      <h2 className="text-2xl text-[#f7f1e3] sm:text-3xl">{isSpeaking ? 'Listening...' : 'Ready for your answer'}</h2>
-                      <p className="mx-auto max-w-xl text-sm leading-6 text-[#9ca5b3]">
-                        播放按钮可以重复当前单词。不会拼写时可以直接标记进入错题复习。
-                      </p>
-                    </div>
                   </div>
 
                   <div className="space-y-3">
-                    <label className="section-label">Type what you hear</label>
                     <Input
                       ref={answerInputRef}
                       value={userInput}
@@ -571,14 +507,13 @@ function App() {
                 <CardHeader className="gap-3 border-b border-white/10">
                   <div className="flex flex-wrap items-center justify-between gap-4">
                     <div>
-                      <p className="section-label mb-2">Session complete</p>
                       <CardTitle className="flex items-center gap-2 text-2xl text-[#f7f1e3]">
                         <Trophy className="h-6 w-6 text-[#d4a867]" />
                         听写完成
                       </CardTitle>
                     </div>
                     <Badge className="premium-badge border border-[#d4a867]/30 bg-[#d4a867]/10 text-[#f2d5a5]">
-                      Accuracy {accuracy}%
+                      {accuracy}%
                     </Badge>
                   </div>
                 </CardHeader>
@@ -600,7 +535,6 @@ function App() {
 
                   {wrongWordsFinal.length > 0 ? (
                     <div className="space-y-3">
-                      <p className="section-label">Needs more repetition</p>
                       <div className="flex flex-wrap gap-2">
                         {wrongWordsFinal.map((word, i) => (
                           <Badge
@@ -630,50 +564,6 @@ function App() {
             )}
           </div>
 
-          <aside className="space-y-6">
-            <Card className="premium-panel border-white/10 bg-[rgba(18,24,35,0.72)] shadow-[0_30px_80px_rgba(2,6,23,0.35)] backdrop-blur">
-              <CardHeader className="gap-3 border-b border-white/10">
-                <CardTitle className="text-lg text-[#f7f1e3]">Session standards</CardTitle>
-                <CardDescription className="text-[#c8c2b7]">
-                  一页完成输入、播放、核对和复习，不切走页面。
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4 pt-6">
-                <div className="feature-item">
-                  <Sparkles className="h-4 w-4 text-[#d4a867]" />
-                  <div>
-                    <p>自动保存</p>
-                    <span>刷新后保留单词列表与语速设置。</span>
-                  </div>
-                </div>
-                <div className="feature-item">
-                  <Repeat2 className="h-4 w-4 text-[#d4a867]" />
-                  <div>
-                    <p>错题复习</p>
-                    <span>答错或不会的单词自动回流，最多两轮。</span>
-                  </div>
-                </div>
-                <div className="feature-item">
-                  <Clock3 className="h-4 w-4 text-[#d4a867]" />
-                  <div>
-                    <p>轻量静态部署</p>
-                    <span>不依赖后端，适合直接挂在个人站点中。</span>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="premium-panel border-white/10 bg-[rgba(18,24,35,0.72)] shadow-[0_30px_80px_rgba(2,6,23,0.35)] backdrop-blur">
-              <CardHeader className="gap-3 border-b border-white/10">
-                <CardTitle className="text-lg text-[#f7f1e3]">Recommended flow</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3 pt-6 text-sm leading-6 text-[#c8c2b7]">
-                <p>1. 贴入本次要练的单词表，先决定是否去重和打乱顺序。</p>
-                <p>2. 用 Enter 快速核对，卡壳时直接标记“我不会”。</p>
-                <p>3. 完成后只盯着错题列表，重新过一遍更高效。</p>
-              </CardContent>
-            </Card>
-          </aside>
         </section>
       </main>
     </div>
